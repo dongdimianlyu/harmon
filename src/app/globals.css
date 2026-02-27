@@ -1,0 +1,72 @@
+@import "tailwindcss";
+
+@theme {
+  --color-background: #E0E5EC;
+  --color-foreground: #3D4852;
+  --color-muted: #6B7280;
+  --color-accent: #6C63FF;
+  --color-accent-light: #8B84FF;
+  --color-accent-secondary: #38B2AC;
+  
+  --font-sans: var(--font-dm-sans), "DM Sans", sans-serif;
+  --font-display: var(--font-plus-jakarta), "Plus Jakarta Sans", sans-serif;
+
+  --shadow-neumorph: 9px 9px 16px rgb(163 177 198 / 0.6), -9px -9px 16px rgb(255 255 255 / 0.5);
+  --shadow-neumorph-hover: 12px 12px 20px rgb(163 177 198 / 0.7), -12px -12px 20px rgb(255 255 255 / 0.6);
+  --shadow-neumorph-sm: 5px 5px 10px rgb(163 177 198 / 0.6), -5px -5px 10px rgb(255 255 255 / 0.5);
+  --shadow-neumorph-inset: inset 6px 6px 10px rgb(163 177 198 / 0.6), inset -6px -6px 10px rgb(255 255 255 / 0.5);
+  --shadow-neumorph-inset-deep: inset 10px 10px 20px rgb(163 177 198 / 0.7), inset -10px -10px 20px rgb(255 255 255 / 0.6);
+  --shadow-neumorph-inset-sm: inset 3px 3px 6px rgb(163 177 198 / 0.6), inset -3px -3px 6px rgb(255 255 255 / 0.5);
+
+  --radius-neumorph-card: 32px;
+  --radius-neumorph-base: 16px;
+  --radius-neumorph-inner: 12px;
+}
+
+:root {
+  color-scheme: light;
+}
+
+body {
+  min-height: 100vh;
+  margin: 0;
+  background-color: var(--color-background);
+  color: var(--color-foreground);
+  font-family: var(--font-sans);
+  scroll-behavior: smooth;
+}
+
+/* Base styles for focus states */
+*:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 2px var(--color-background), 0 0 0 4px var(--color-accent);
+}
+
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--color-background);
+  box-shadow: var(--shadow-neumorph-inset-sm);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #C4D0DF;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #A3B1C6;
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+
+.animate-float {
+  animation: float 3s ease-in-out infinite;
+}
