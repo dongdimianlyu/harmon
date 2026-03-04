@@ -1,72 +1,114 @@
 @import "tailwindcss";
 
-@theme {
-  --color-background: #E0E5EC;
-  --color-foreground: #3D4852;
-  --color-muted: #6B7280;
-  --color-accent: #6C63FF;
-  --color-accent-light: #8B84FF;
-  --color-accent-secondary: #38B2AC;
-  
-  --font-sans: var(--font-dm-sans), "DM Sans", sans-serif;
-  --font-display: var(--font-plus-jakarta), "Plus Jakarta Sans", sans-serif;
-
-  --shadow-neumorph: 9px 9px 16px rgb(163 177 198 / 0.6), -9px -9px 16px rgb(255 255 255 / 0.5);
-  --shadow-neumorph-hover: 12px 12px 20px rgb(163 177 198 / 0.7), -12px -12px 20px rgb(255 255 255 / 0.6);
-  --shadow-neumorph-sm: 5px 5px 10px rgb(163 177 198 / 0.6), -5px -5px 10px rgb(255 255 255 / 0.5);
-  --shadow-neumorph-inset: inset 6px 6px 10px rgb(163 177 198 / 0.6), inset -6px -6px 10px rgb(255 255 255 / 0.5);
-  --shadow-neumorph-inset-deep: inset 10px 10px 20px rgb(163 177 198 / 0.7), inset -10px -10px 20px rgb(255 255 255 / 0.6);
-  --shadow-neumorph-inset-sm: inset 3px 3px 6px rgb(163 177 198 / 0.6), inset -3px -3px 6px rgb(255 255 255 / 0.5);
-
-  --radius-neumorph-card: 32px;
-  --radius-neumorph-base: 16px;
-  --radius-neumorph-inner: 12px;
+@theme inline {
+  --color-background: #030711;
+  --color-surface: #0a1324;
+  --color-panel: rgba(11, 19, 36, 0.75);
+  --color-panel-strong: rgba(18, 28, 49, 0.92);
+  --color-foreground: #f8fbff;
+  --color-muted: #9fb2d9;
+  --color-border: rgba(255, 255, 255, 0.08);
+  --color-border-strong: rgba(255, 255, 255, 0.16);
+  --color-primary: #6b8cff;
+  --color-primary-dark: #3450ff;
+  --color-primary-foreground: #05060a;
+  --color-accent: #70f4d4;
+  --color-accent-foreground: #04141a;
+  --color-warning: #f4c76f;
+  --color-danger: #ff6b6b;
+  --color-success: #53f89b;
+  --color-info: #73cfff;
+  --shadow-soft: 0 20px 45px rgba(5, 9, 20, 0.45);
+  --shadow-glow: 0 0 40px rgba(107, 140, 255, 0.35);
+  --font-sans: var(--font-space-grotesk);
+  --font-mono: var(--font-plex-mono);
 }
 
 :root {
-  color-scheme: light;
+  color-scheme: dark;
 }
 
 body {
   min-height: 100vh;
   margin: 0;
-  background-color: var(--color-background);
+  background-color: #000000;
+  background-image: none;
   color: var(--color-foreground);
-  font-family: var(--font-sans);
+  font-family: var(--font-sans), "Space Grotesk", system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+  letter-spacing: 0.01em;
   scroll-behavior: smooth;
+  --cursor-dot: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12'%3E%3Ccircle cx='6' cy='6' r='4' fill='%23ffffff'/%3E%3C/svg%3E") 6 6, auto;
+  --cursor-dot-active: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14'%3E%3Ccircle cx='7' cy='7' r='5' fill='%2370f4d4'/%3E%3C/svg%3E") 7 7, auto;
+  cursor: var(--cursor-dot);
 }
 
-/* Base styles for focus states */
-*:focus-visible {
-  outline: none;
-  box-shadow: 0 0 0 2px var(--color-background), 0 0 0 4px var(--color-accent);
+* {
+  cursor: var(--cursor-dot);
+}
+
+button,
+a,
+input,
+textarea,
+select,
+label,
+[role="button"] {
+  cursor: var(--cursor-dot);
+}
+
+button:active,
+a:active,
+input:active,
+textarea:active,
+select:active,
+label:active,
+[role="button"]:active,
+*:active {
+  cursor: var(--cursor-dot-active) !important;
+}
+
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  background: none;
+  opacity: 0;
+  pointer-events: none;
+  z-index: 0;
+}
+
+body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  background: none;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.app-shell {
+  position: relative;
+  z-index: 1;
+}
+
+* {
+  border-color: var(--color-border);
 }
 
 ::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
+  width: 6px;
+  height: 6px;
 }
 
 ::-webkit-scrollbar-track {
-  background: var(--color-background);
-  box-shadow: var(--shadow-neumorph-inset-sm);
-  border-radius: 4px;
+  background: transparent;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #C4D0DF;
-  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.18);
+  border-radius: 3px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #A3B1C6;
-}
-
-@keyframes float {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-10px); }
-}
-
-.animate-float {
-  animation: float 3s ease-in-out infinite;
+  background: rgba(255, 255, 255, 0.32);
 }

@@ -1,16 +1,17 @@
 import type { Metadata } from "next";
-import { Plus_Jakarta_Sans, DM_Sans } from "next/font/google";
+import { Space_Grotesk, IBM_Plex_Mono } from "next/font/google";
 import "./globals.css";
+import SmoothScroll from "@/components/smooth-scroll";
 
-const plusJakarta = Plus_Jakarta_Sans({
-  variable: "--font-plus-jakarta",
+const spaceGrotesk = Space_Grotesk({
+  variable: "--font-space-grotesk",
   subsets: ["latin"],
 });
 
-const dmSans = DM_Sans({
-  variable: "--font-dm-sans",
+const plexMono = IBM_Plex_Mono({
+  variable: "--font-plex-mono",
   subsets: ["latin"],
-  weight: ["400", "500", "700"],
+  weight: ["400", "500"],
 });
 
 export const metadata: Metadata = {
@@ -27,9 +28,11 @@ export default function RootLayout({
     <html lang="en">
       <body
         suppressHydrationWarning
-        className={`${plusJakarta.variable} ${dmSans.variable} antialiased bg-background text-foreground selection:bg-accent/20 selection:text-accent`}
+        className={`${spaceGrotesk.variable} ${plexMono.variable} antialiased bg-slate-950 text-foreground`}
       >
-        {children}
+        <SmoothScroll>
+          {children}
+        </SmoothScroll>
       </body>
     </html>
   );

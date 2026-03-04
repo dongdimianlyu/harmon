@@ -5,38 +5,37 @@ import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 import {
   LayoutDashboard,
-  User,
-  FlaskConical,
-  PenTool,
-  TrendingUp,
+  Target,
+  Zap,
+  Activity,
+  Network,
 } from "lucide-react";
-import { Well } from "@/components/ui/well";
 
 const navItems = [
   { href: "/app", label: "Dashboard", icon: LayoutDashboard },
-  { href: "/app/profile", label: "My Profile", icon: User },
-  { href: "/app/strategy", label: "Strategy Lab", icon: FlaskConical },
-  { href: "/app/writing", label: "Writing Studio", icon: PenTool },
-  { href: "/app/growth", label: "Growth Tracker", icon: TrendingUp },
+  { href: "/app/positioning", label: "Positioning", icon: Target },
+  { href: "/app/execution", label: "Execution", icon: Zap },
+  { href: "/app/signal", label: "Signal", icon: Activity },
+  { href: "/app/narrative", label: "Narrative", icon: Network },
 ];
 
 export function Sidebar() {
   const pathname = usePathname();
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 bg-[var(--color-background)]/80 backdrop-blur-xl border-b-2 border-transparent shadow-[0_4px_30px_rgba(163,177,198,0.2)]">
-      <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
-        <div className="flex items-center gap-4">
-          <div className="w-12 h-12 rounded-2xl shadow-neumorph flex items-center justify-center">
-            <span className="text-[var(--color-accent)] text-xl font-display font-extrabold">H</span>
+    <header className="fixed top-0 left-0 right-0 z-50 backdrop-blur-xl bg-black/70 border-b border-white/10">
+      <div className="max-w-7xl mx-auto px-8 py-4 flex items-center justify-between">
+        <div className="flex items-center gap-3">
+          <div className="w-9 h-9 rounded-lg bg-accent flex items-center justify-center">
+            <span className="text-black text-sm font-bold">H</span>
           </div>
-          <div className="hidden sm:block">
-            <p className="text-[10px] uppercase font-bold tracking-[0.2em] text-[var(--color-muted)]">Harmon</p>
-            <p className="text-sm text-[var(--color-foreground)] font-bold tracking-tight font-display">Admissions Intelligence</p>
+          <div>
+            <p className="text-xs uppercase tracking-[0.3em] text-muted-foreground">Harmon</p>
+            <p className="text-sm text-white font-semibold">Admissions Intelligence</p>
           </div>
         </div>
 
-        <nav className="flex items-center gap-2 p-1.5 rounded-2xl shadow-neumorph-inset bg-[var(--color-background)]">
+        <nav className="flex items-center gap-1 rounded-full bg-white/5 border border-white/10 px-3 py-1.5">
           {navItems.map((item) => {
             const isActive = pathname === item.href || pathname.startsWith(`${item.href}/`);
             const Icon = item.icon;
@@ -46,29 +45,30 @@ export function Sidebar() {
                 key={item.href}
                 href={item.href}
                 className={cn(
-                  "flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-bold transition-all duration-300",
+                  "flex items-center gap-2 px-3 py-1.5 rounded-full text-sm font-medium transition",
                   isActive
-                    ? "bg-[var(--color-background)] text-[var(--color-accent)] shadow-neumorph"
-                    : "text-[var(--color-muted)] hover:text-[var(--color-foreground)] hover:bg-[var(--color-background)] hover:shadow-neumorph-sm"
+                    ? "bg-white text-black shadow-lg"
+                    : "text-muted-foreground hover:text-white"
                 )}
               >
-                <Icon size={18} strokeWidth={2} className={cn(isActive && "text-[var(--color-accent)]")} />
-                <span className="hidden md:inline-block">{item.label}</span>
+                <Icon size={16} strokeWidth={1.6} />
+                <span>{item.label}</span>
               </Link>
             );
           })}
         </nav>
 
-        <div className="flex items-center gap-4">
-          <div className="text-right hidden sm:block">
-            <p className="text-sm text-[var(--color-foreground)] font-bold font-display">Alex Chen</p>
-            <p className="text-[10px] text-[var(--color-muted)] font-bold uppercase tracking-widest">Class of 2026</p>
+        <div className="flex items-center gap-3">
+          <div className="text-right">
+            <p className="text-sm text-white font-medium">Alex Chen</p>
+            <p className="text-[11px] text-muted-foreground uppercase tracking-wide">Class of 2026</p>
           </div>
-          <Well depth="deep" className="w-12 h-12 p-0 flex items-center justify-center rounded-full">
-            <span className="text-[var(--color-accent)] text-sm font-bold font-display tracking-tight">AC</span>
-          </Well>
+          <div className="w-9 h-9 rounded-full bg-white/10 border border-white/20 flex items-center justify-center">
+            <span className="text-white text-xs font-medium">AC</span>
+          </div>
         </div>
       </div>
     </header>
   );
 }
+

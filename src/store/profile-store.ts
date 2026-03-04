@@ -1,230 +1,168 @@
 import { create } from "zustand";
+import { persist } from "zustand/middleware";
 import type {
   StudentProfile,
+  PersonalProfile,
+  AcademicProfile,
+  IntendedMajor,
   Activity,
   Award,
-  Recommender,
-  Academics,
-} from "@/types/profile";
+} from "@/engine/core/types";
 
 interface ProfileState {
   profile: StudentProfile;
   setProfile: (profile: StudentProfile) => void;
-  updateAcademics: (academics: Partial<Academics>) => void;
+  updatePersonal: (personal: Partial<PersonalProfile>) => void;
+  updateAcademics: (academics: Partial<AcademicProfile>) => void;
+  updateIntendedMajor: (major: Partial<IntendedMajor>) => void;
+  updateTimeBudget: (budget: { hoursPerWeekAvailable: number }) => void;
+  updateTargetTier: (tier: StudentProfile["targetTier"]) => void;
   addActivity: (activity: Activity) => void;
   updateActivity: (id: string, activity: Partial<Activity>) => void;
   removeActivity: (id: string) => void;
   addAward: (award: Award) => void;
   updateAward: (id: string, award: Partial<Award>) => void;
   removeAward: (id: string) => void;
-  addRecommender: (recommender: Recommender) => void;
-  updateRecommender: (id: string, recommender: Partial<Recommender>) => void;
-  removeRecommender: (id: string) => void;
-  updateBasicInfo: (info: Partial<Pick<StudentProfile, "firstName" | "lastName" | "gradeLevel">>) => void;
 }
 
 const defaultProfile: StudentProfile = {
-  firstName: "Alex",
-  lastName: "Chen",
-  gradeLevel: 11,
-  academics: {
-    gpa: 3.85,
-    courseRigor: "ap_ib",
-    satScore: 1480,
-    actScore: null,
-    intendedMajor: "Computer Science",
+  personal: {
+    gradeLevel: 11,
+    geography: "CA",
+    schoolType: "Public",
+    financialConstraintLevel: "None",
   },
-  activities: [
-    {
-      id: "act-1",
-      title: "Robotics Club",
-      category: "stem",
-      yearsActive: 3,
-      weeklyHours: 8,
-      leadershipLevel: "vice_president",
-      initiativeOwnership: true,
-      impactScope: "regional",
-      measurableOutcomes: "Led team to regional championship finals; designed autonomous navigation system adopted by 3 other teams",
-    },
-    {
-      id: "act-2",
-      title: "Code for Community",
-      category: "community_service",
-      yearsActive: 2,
-      weeklyHours: 5,
-      leadershipLevel: "founder",
-      initiativeOwnership: true,
-      impactScope: "local",
-      measurableOutcomes: "Founded nonprofit coding workshops serving 120+ underserved middle school students across 4 schools",
-    },
-    {
-      id: "act-3",
-      title: "Math Olympiad Team",
-      category: "academic",
-      yearsActive: 3,
-      weeklyHours: 4,
-      leadershipLevel: "active_member",
-      initiativeOwnership: false,
-      impactScope: "state",
-      measurableOutcomes: "State qualifier in AMC/AIME; top 15% nationally in AMC 12",
-    },
-    {
-      id: "act-4",
-      title: "Machine Learning Research",
-      category: "research",
-      yearsActive: 1,
-      weeklyHours: 6,
-      leadershipLevel: "active_member",
-      initiativeOwnership: false,
-      impactScope: "school",
-      measurableOutcomes: "Conducting NLP research under university mentor; working paper on sentiment analysis in educational contexts",
-    },
-    {
-      id: "act-5",
-      title: "Cross Country",
-      category: "athletics",
-      yearsActive: 2,
-      weeklyHours: 10,
-      leadershipLevel: "member",
-      initiativeOwnership: false,
-      impactScope: "school",
-      measurableOutcomes: "Varsity letter; improved personal best by 2 minutes over two seasons",
-    },
-  ],
-  awards: [
-    {
-      id: "awd-1",
-      title: "USACO Silver Division",
-      level: "national",
-      year: 2025,
-      description: "Advanced to Silver division in USA Computing Olympiad",
-    },
-    {
-      id: "awd-2",
-      title: "Regional Science Fair — First Place",
-      level: "regional",
-      year: 2024,
-      description: "First place in Engineering category for autonomous drone navigation project",
-    },
-    {
-      id: "awd-3",
-      title: "AP Scholar with Distinction",
-      level: "national",
-      year: 2025,
-      description: "Scored 4 or higher on five AP exams",
-    },
-  ],
-  recommenders: [
-    {
-      id: "rec-1",
-      name: "Dr. Sarah Mitchell",
-      subject: "AP Computer Science",
-      strengthRating: 5,
-      narrativeAlignmentTag: "Innovation",
-    },
-    {
-      id: "rec-2",
-      name: "Mr. James Park",
-      subject: "AP Calculus BC",
-      strengthRating: 4,
-      narrativeAlignmentTag: "Analytical Thinking",
-    },
-  ],
+  academics: {
+    gpaUnweighted: 0.0,
+    gpaScale: 4.0,
+    gpaWeighted: 0.0,
+    courseRigor: 5,
+  },
+  intendedMajorInfo: {
+    primary: "",
+    certaintyLevel: 3,
+  },
+  intendedMajor: "", // derived from primary
+  timeBudget: {
+    hoursPerWeekAvailable: 20,
+  },
+  availableHoursPerWeek: 20, // derived from timeBudget
+  geography: "CA", // derived from personal
+  targetTier: "T20",
+  activities: [],
+  awards: [],
 };
 
-export const useProfileStore = create<ProfileState>((set) => ({
-  profile: defaultProfile,
+export const useProfileStore = create<ProfileState>()(
+  persist(
+    (set) => ({
+      profile: defaultProfile,
 
-  setProfile: (profile) => set({ profile }),
+      setProfile: (profile) => set({ profile }),
 
-  updateBasicInfo: (info) =>
-    set((state) => ({
-      profile: { ...state.profile, ...info },
-    })),
+      updatePersonal: (personal) =>
+        set((state) => {
+          const updated = { ...state.profile.personal, ...personal };
+          return {
+            profile: {
+              ...state.profile,
+              personal: updated,
+              geography: updated.geography, // keep legacy sync
+            },
+          };
+        }),
 
-  updateAcademics: (academics) =>
-    set((state) => ({
-      profile: {
-        ...state.profile,
-        academics: { ...state.profile.academics, ...academics },
-      },
-    })),
+      updateAcademics: (academics) =>
+        set((state) => ({
+          profile: {
+            ...state.profile,
+            academics: { ...state.profile.academics, ...academics },
+          },
+        })),
 
-  addActivity: (activity) =>
-    set((state) => ({
-      profile: {
-        ...state.profile,
-        activities: [...state.profile.activities, activity],
-      },
-    })),
+      updateIntendedMajor: (major) =>
+        set((state) => {
+          const updated = { ...state.profile.intendedMajorInfo, ...major };
+          return {
+            profile: {
+              ...state.profile,
+              intendedMajorInfo: updated,
+              intendedMajor: updated.primary, // keep legacy sync
+            },
+          };
+        }),
 
-  updateActivity: (id, updates) =>
-    set((state) => ({
-      profile: {
-        ...state.profile,
-        activities: state.profile.activities.map((a) =>
-          a.id === id ? { ...a, ...updates } : a
-        ),
-      },
-    })),
+      updateTimeBudget: (budget) =>
+        set((state) => ({
+          profile: {
+            ...state.profile,
+            timeBudget: budget,
+            availableHoursPerWeek: budget.hoursPerWeekAvailable, // keep legacy sync
+          },
+        })),
+        
+      updateTargetTier: (tier) =>
+        set((state) => ({
+          profile: {
+            ...state.profile,
+            targetTier: tier,
+          },
+        })),
 
-  removeActivity: (id) =>
-    set((state) => ({
-      profile: {
-        ...state.profile,
-        activities: state.profile.activities.filter((a) => a.id !== id),
-      },
-    })),
+      addActivity: (activity) =>
+        set((state) => ({
+          profile: {
+            ...state.profile,
+            activities: [...state.profile.activities, activity],
+          },
+        })),
 
-  addAward: (award) =>
-    set((state) => ({
-      profile: {
-        ...state.profile,
-        awards: [...state.profile.awards, award],
-      },
-    })),
+      updateActivity: (id, updates) =>
+        set((state) => ({
+          profile: {
+            ...state.profile,
+            activities: state.profile.activities.map((a) =>
+              a.id === id ? { ...a, ...updates } : a
+            ),
+          },
+        })),
 
-  updateAward: (id, updates) =>
-    set((state) => ({
-      profile: {
-        ...state.profile,
-        awards: state.profile.awards.map((a) =>
-          a.id === id ? { ...a, ...updates } : a
-        ),
-      },
-    })),
+      removeActivity: (id) =>
+        set((state) => ({
+          profile: {
+            ...state.profile,
+            activities: state.profile.activities.filter((a) => a.id !== id),
+          },
+        })),
 
-  removeAward: (id) =>
-    set((state) => ({
-      profile: {
-        ...state.profile,
-        awards: state.profile.awards.filter((a) => a.id !== id),
-      },
-    })),
+      addAward: (award) =>
+        set((state) => ({
+          profile: {
+            ...state.profile,
+            awards: [...state.profile.awards, award],
+          },
+        })),
 
-  addRecommender: (recommender) =>
-    set((state) => ({
-      profile: {
-        ...state.profile,
-        recommenders: [...state.profile.recommenders, recommender],
-      },
-    })),
+      updateAward: (id, updates) =>
+        set((state) => ({
+          profile: {
+            ...state.profile,
+            awards: state.profile.awards.map((a) =>
+              a.id === id ? { ...a, ...updates } : a
+            ),
+          },
+        })),
 
-  updateRecommender: (id, updates) =>
-    set((state) => ({
-      profile: {
-        ...state.profile,
-        recommenders: state.profile.recommenders.map((r) =>
-          r.id === id ? { ...r, ...updates } : r
-        ),
-      },
-    })),
-
-  removeRecommender: (id) =>
-    set((state) => ({
-      profile: {
-        ...state.profile,
-        recommenders: state.profile.recommenders.filter((r) => r.id !== id),
-      },
-    })),
-}));
+      removeAward: (id) =>
+        set((state) => ({
+          profile: {
+            ...state.profile,
+            awards: state.profile.awards.filter((a) => a.id !== id),
+          },
+        })),
+    }),
+    {
+      name: "harmon-onboarding-storage",
+    }
+  )
+);

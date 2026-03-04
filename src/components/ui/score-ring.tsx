@@ -24,27 +24,24 @@ export function ScoreRing({
   const offset = circumference - (score / 100) * circumference;
 
   const getColor = (s: number) => {
-    if (s >= 80) return "var(--color-accent-secondary)"; // Teal
-    if (s >= 60) return "var(--color-accent)"; // Violet
-    if (s >= 40) return "#fbbf24"; // Amber
-    return "#f87171"; // Red
+    if (s >= 80) return "#059669";
+    if (s >= 60) return "#2563eb";
+    if (s >= 40) return "#d97706";
+    return "#dc2626";
   };
 
   return (
     <div className={cn("flex flex-col items-center", className)}>
-      <div className="relative rounded-full shadow-neumorph-inset-sm p-1.5 bg-[var(--color-background)]" style={{ width: size + 12, height: size + 12 }}>
+      <div className="relative" style={{ width: size, height: size }}>
         <svg width={size} height={size} className="-rotate-90">
-          {/* Base Track */}
           <circle
             cx={size / 2}
             cy={size / 2}
             r={radius}
             fill="none"
-            stroke="var(--color-background)"
+            stroke="#e2e8f0"
             strokeWidth={strokeWidth}
-            className="drop-shadow-[inset_2px_2px_4px_rgba(163,177,198,0.5)]"
           />
-          {/* Progress Ring */}
           <circle
             cx={size / 2}
             cy={size / 2}
@@ -55,18 +52,18 @@ export function ScoreRing({
             strokeDasharray={circumference}
             strokeDashoffset={offset}
             strokeLinecap="round"
-            className="transition-all duration-700 ease-out drop-shadow-[0_4px_8px_rgba(108,99,255,0.4)]"
+            className="transition-all duration-700 ease-out"
           />
         </svg>
         <div className="absolute inset-0 flex flex-col items-center justify-center">
-          <span className="text-3xl font-extrabold font-display text-[var(--color-foreground)] tracking-tight">{score}</span>
+          <span className="text-2xl font-bold text-foreground">{score}</span>
         </div>
       </div>
       {label && (
-        <span className="text-sm font-bold text-[var(--color-foreground)] mt-4">{label}</span>
+        <span className="text-sm font-medium text-foreground mt-2">{label}</span>
       )}
       {sublabel && (
-        <span className="text-[10px] font-bold uppercase tracking-wider text-[var(--color-muted)] mt-1">{sublabel}</span>
+        <span className="text-xs text-muted-foreground mt-0.5">{sublabel}</span>
       )}
     </div>
   );

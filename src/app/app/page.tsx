@@ -13,7 +13,6 @@ import { Card, CardHeader } from "@/components/ui/card";
 import { ScoreRing } from "@/components/ui/score-ring";
 import { ProgressBar } from "@/components/ui/progress-bar";
 import { Badge } from "@/components/ui/badge";
-import { Well } from "@/components/ui/well";
 import type { StrengthTile } from "@/types/profile";
 import {
   TrendingUp,
@@ -45,10 +44,10 @@ export default function DashboardPage() {
 
   const trendColor =
     scores.trend === "rising"
-      ? "text-[var(--color-accent-secondary)]"
+      ? "text-success"
       : scores.trend === "declining"
-      ? "text-red-500"
-      : "text-[var(--color-muted)]";
+      ? "text-danger"
+      : "text-muted-foreground";
 
   const trendLabel =
     scores.trend === "rising"
@@ -78,222 +77,252 @@ export default function DashboardPage() {
 
   return (
     <div>
-      <div className="mb-10 text-center sm:text-left">
-        <h1 className="text-4xl font-extrabold text-[var(--color-foreground)] font-display tracking-tight">Dashboard</h1>
-        <p className="text-[var(--color-muted)] font-medium mt-2 text-lg">
+      <div className="mb-8">
+        <h1 className="text-2xl font-bold text-foreground">Dashboard</h1>
+        <p className="text-muted-foreground text-sm mt-1">
           Strategic overview of your admissions positioning
         </p>
       </div>
 
-      <div className="grid grid-cols-12 gap-8">
+      <div className="grid grid-cols-12 gap-6">
         {/* Profile Strength Index */}
         <div className="col-span-12 lg:col-span-5 xl:col-span-4">
-          <Card className="h-full" padding="lg">
+          <Card className="h-full">
             <CardHeader
               title="Profile Strength Index"
               subtitle="Tiered snapshot of your readiness pillars"
             />
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-2 gap-3">
               {strengthTiles.map((tile) => {
                 const tierDisplay = tile.tier ?? "?";
                 return (
                   <div
                     key={tile.key}
-                    onClick={() => setSelectedTile(tile)}
-                    className="p-5 rounded-2xl bg-[var(--color-background)] shadow-neumorph hover:shadow-neumorph-hover hover:-translate-y-1 transition-all duration-300 cursor-pointer flex flex-col gap-3 group"
+                    className="group rounded-3xl border border-white/10 bg-gradient-to-br from-[#11121a] via-[#0a0c12] to-[#05060a] text-white shadow-[0_18px_45px_-35px_rgba(15,23,42,1)] overflow-hidden"
                   >
-                    <div className="flex items-center justify-between">
-                      <span className="text-xs font-bold uppercase tracking-wider text-[var(--color-muted)] group-hover:text-[var(--color-accent)] transition-colors">
-                        {tile.label}
-                      </span>
+                    <div className="relative p-4 pb-5 min-h-[150px] flex flex-col justify-between">
+                      <div
+                        className="pointer-events-none absolute -top-6 -right-6 h-28 w-28 opacity-70 blur-sm"
+                        style={{ background: `radial-gradient(circle, ${tile.accent[0]}, transparent)` }}
+                      />
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <p className="text-xs uppercase tracking-wide text-white/70">{tile.label}</p>
+                          <p className="text-[11px] text-white/50">{tile.description}</p>
+                        </div>
+                        <span className="inline-flex items-center rounded-full border border-white/20 px-2 py-0.5 text-[11px] font-semibold text-white/80">
+                          Tier
+                        </span>
+                      </div>
+                      <div className="mt-6 text-center">
+                        <span className="text-4xl font-bold tracking-tight">
+                          {typeof tierDisplay === "number" ? tierDisplay : tierDisplay}
+                        </span>
+                        {typeof tierDisplay === "number" && (
+                          <span className="text-sm text-white/40 ml-1">/5</span>
+                        )}
+                      </div>
                     </div>
-                    <div className="flex items-end justify-between">
-                      <span className="text-3xl font-extrabold font-display text-[var(--color-foreground)]">
-                        {tierDisplay}
-                      </span>
-                      <span className="text-xs font-bold text-[var(--color-muted)] pb-1">
-                        {tile.tier}/100
-                      </span>
-                    </div>
+                    <button
+                      className="w-full bg-black/70 text-center py-2 text-xs font-semibold tracking-wide text-white/80 transition group-hover:bg-black/80"
+                      onClick={() => setSelectedTile(tile)}
+                    >
+                      View Details
+                    </button>
                   </div>
                 );
               })}
             </div>
-            {selectedTile && (
-              <Well depth="deep" className="mt-6 p-5">
-                <div className="flex items-center justify-between mb-3">
-                  <h4 className="text-sm font-bold text-[var(--color-foreground)] capitalize tracking-wider">
-                    {selectedTile.label} Focus
-                  </h4>
-                  <Badge variant="outline" className="text-[10px]">
-                    Tier {selectedTile.tier}
-                  </Badge>
+            <div className={`mt-4 flex items-center gap-2 rounded-2xl border border-white/10 bg-black/40 px-3 py-2 ${trendColor}`}>
+              <TrendIcon size={16} />
+              <span className="text-sm font-medium text-white">{trendLabel}</span>
+            </div>
+            <div className="mt-4 rounded-3xl border border-white/10 bg-gradient-to-b from-black/60 to-black/80 p-4 text-white">
+              {selectedTile ? (
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-xs uppercase tracking-[0.25em] text-white/60">Selected Pillar</p>
+                      <p className="text-lg font-semibold">{selectedTile.label}</p>
+                    </div>
+                    <span className="rounded-full border border-white/20 px-2 py-0.5 text-[11px] font-semibold text-white/80">
+                      {selectedTile.tier ? `Tier ${selectedTile.tier}` : "Unrated"}
+                    </span>
+                  </div>
+                  <div className="rounded-2xl bg-white/5 p-3">
+                    <p className="text-[11px] uppercase tracking-wide text-white/60 mb-1">Why this tier</p>
+                    <p className="text-sm text-white/90 leading-relaxed">
+                      {selectedTile.explanation}
+                    </p>
+                  </div>
+                  <div className="rounded-2xl bg-white/5 p-3">
+                    <p className="text-[11px] uppercase tracking-wide text-white/60 mb-1">Strategic move</p>
+                    <p className="text-sm text-white/90 leading-relaxed">
+                      {selectedTile.strategicMove}
+                    </p>
+                  </div>
                 </div>
-                <p className="text-sm text-[var(--color-muted)] font-medium leading-relaxed">
-                  {selectedTile.explanation}
-                </p>
-              </Well>
-            )}
+              ) : (
+                <div className="text-sm text-white/70 text-center py-4">
+                  Tap “View Details” on any pillar to see why it earned its tier and the highest leverage upgrade.
+                </div>
+              )}
+            </div>
           </Card>
         </div>
 
-        {/* Main Insights Column */}
-        <div className="col-span-12 lg:col-span-7 xl:col-span-8 flex flex-col gap-8">
-          {/* Topline Metrics */}
-          <Card padding="lg">
-            <div className="flex flex-col md:flex-row items-center gap-8 md:gap-12">
-              <div className="shrink-0 relative">
-                <Well depth="deep" className="p-4 rounded-full flex items-center justify-center">
-                  <ScoreRing score={scores.composite} size={140} strokeWidth={12} />
-                </Well>
-              </div>
+        <div className="col-span-12 lg:col-span-7 flex flex-col gap-6">
+          {/* Cluster Identity Card */}
+          <Card className="h-full overflow-hidden">
+            <div className="relative rounded-[30px] border border-white/10 bg-gradient-to-br from-slate-900 via-slate-900/70 to-slate-900/30 p-6 text-white shadow-[0_35px_120px_-60px_rgba(15,23,42,1)]">
+              <div className="pointer-events-none absolute inset-0 rounded-[30px] bg-[radial-gradient(circle_at_top,_rgba(56,189,248,0.25),_transparent_55%)]" />
+              <div className="relative z-10 space-y-6">
+                <div className="flex flex-wrap items-center justify-between gap-4">
+                  <div>
+                    <p className="text-xs uppercase tracking-[0.3em] text-white/60">Cluster Identity</p>
+                    <p className="text-sm text-white/70">Your competitive positioning among applicant pools</p>
+                  </div>
+                  <div className="flex items-center gap-2 rounded-full border border-white/20 px-3 py-1 text-xs font-semibold text-white/80">
+                    <Layers size={14} className="text-sky-200" />
+                    <span>Cluster Insight</span>
+                  </div>
+                </div>
 
-              <div className="flex-1 space-y-8 w-full">
+                <div className="flex flex-wrap items-center gap-3">
+                  <div className="rounded-2xl border border-white/20 bg-white/10 px-4 py-2 text-lg font-semibold text-white shadow-inner">
+                    {cluster.label}
+                  </div>
+                  <div className="rounded-full border border-white/15 bg-white/5 px-3 py-1 text-xs font-medium text-white/80">
+                    <Sparkles size={12} className="mr-1 inline text-amber-200" />
+                    Differentiation focus • {scores.differentiation}th %
+                  </div>
+                </div>
+
                 <div>
-                  <h2 className="text-2xl font-extrabold font-display tracking-tight text-[var(--color-foreground)] mb-2">
-                    Composite Competitiveness
-                  </h2>
-                  <div className="flex items-center gap-3">
-                    <Badge variant="default" className="text-sm py-1.5 px-4 shadow-neumorph-sm">
-                      Top {100 - scores.composite}%
-                    </Badge>
-                    <div className={`flex items-center gap-1.5 text-sm font-bold ${trendColor}`}>
-                      <TrendIcon size={18} strokeWidth={2.5} />
-                      {trendLabel}
+                  <div className="mb-2 flex items-center justify-between text-xs text-white/70">
+                    <span>Competitive Saturation</span>
+                    <span className="font-semibold text-white">{cluster.saturation}%</span>
+                  </div>
+                  <div className="h-2 rounded-full bg-white/10">
+                    <div
+                      className={`relative h-full rounded-full ${
+                        cluster.saturation > 70
+                          ? "bg-gradient-to-r from-rose-500 to-orange-400"
+                          : cluster.saturation > 50
+                          ? "bg-gradient-to-r from-amber-400 to-yellow-300"
+                          : "bg-gradient-to-r from-emerald-400 to-teal-300"
+                      }`}
+                      style={{ width: `${cluster.saturation}%` }}
+                    >
+                      <span className="absolute -right-2 -top-1 h-4 w-4 rounded-full border-2 border-white bg-white/80" />
                     </div>
                   </div>
                 </div>
 
-                <Well depth="default" className="p-5">
-                  <div className="flex flex-wrap items-center justify-between gap-4 mb-4">
-                    <div>
-                      <p className="text-[10px] uppercase font-bold tracking-[0.2em] text-[var(--color-muted)] mb-1">Cluster Identity</p>
-                      <p className="text-sm font-bold text-[var(--color-foreground)]">Your competitive positioning</p>
-                    </div>
-                    <Badge variant="accent" className="text-xs">
-                      <Layers size={14} className="mr-1.5 inline" />
-                      Cluster Insight
-                    </Badge>
-                  </div>
-
-                  <div className="flex flex-wrap items-center gap-4 mb-6">
-                    <div className="rounded-xl shadow-neumorph-inset-sm bg-[var(--color-background)] px-4 py-2 text-lg font-extrabold font-display text-[var(--color-accent)]">
-                      {cluster.label}
-                    </div>
-                    <div className="rounded-xl shadow-neumorph-sm bg-[var(--color-background)] px-4 py-2 text-xs font-bold text-[var(--color-foreground)] flex items-center">
-                      <Sparkles size={14} className="mr-2 text-[var(--color-accent-secondary)]" />
-                      Diff. Focus • {scores.differentiation}th %
-                    </div>
-                  </div>
-
-                  <div>
-                    <div className="mb-2 flex items-center justify-between text-xs font-bold uppercase tracking-wider text-[var(--color-muted)]">
-                      <span>Competitive Saturation</span>
-                      <span className="text-[var(--color-foreground)]">{cluster.saturation}%</span>
-                    </div>
-                    <ProgressBar value={cluster.saturation} size="lg" color={cluster.saturation > 70 ? "danger" : cluster.saturation > 50 ? "warning" : "success"} />
-                  </div>
-
-                  <p className="text-sm font-medium leading-relaxed text-[var(--color-muted)] mt-5 pt-5 border-t border-[var(--color-muted)]/20 shadow-[0_-1px_1px_rgba(255,255,255,0.5)]">
-                    {cluster.insight}
-                  </p>
-                </Well>
+                <p className="text-sm leading-relaxed text-white/80">
+                  {cluster.insight}
+                </p>
               </div>
             </div>
           </Card>
 
-          {/* Strategic Alerts & Moves */}
-          <div className="grid grid-cols-1 xl:grid-cols-2 gap-8">
-            <Card padding="lg">
-              <CardHeader
-                title="Strategic Alerts"
-                subtitle="Priority areas requiring attention"
-                action={<Badge variant="outline">{alerts.length} active</Badge>}
-              />
-              <div className="space-y-4">
-                {alerts.map((alert) => (
-                  <div
-                    key={alert.id}
-                    className="flex items-start gap-4 p-4 rounded-2xl bg-[var(--color-background)] shadow-neumorph-inset-sm"
-                  >
-                    <div className="mt-1 p-2 rounded-xl shadow-neumorph-sm bg-[var(--color-background)]">
-                      <AlertTriangle
-                        size={18}
-                        className={
-                          alert.severity === "critical"
-                            ? "text-red-500"
-                            : alert.severity === "high"
-                            ? "text-amber-500"
-                            : "text-blue-500"
-                        }
-                      />
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center gap-3 mb-1.5">
-                        <span className="text-sm font-bold text-[var(--color-foreground)]">
-                          {alert.title}
-                        </span>
-                      </div>
-                      <p className="text-xs font-medium text-[var(--color-muted)] leading-relaxed">
-                        {alert.description}
-                      </p>
-                    </div>
+          {/* Strategic Alerts */}
+          <Card>
+            <CardHeader
+              title="Strategic Alerts"
+              subtitle="Priority areas requiring attention"
+              action={
+                <Badge variant="outline">{alerts.length} active</Badge>
+              }
+            />
+            <div className="space-y-3">
+              {alerts.map((alert) => (
+                <div
+                  key={alert.id}
+                  className="flex items-start gap-3 p-3 rounded-lg bg-muted/50 border border-border/50"
+                >
+                  <div className="mt-0.5">
+                    <AlertTriangle
+                      size={16}
+                      className={
+                        alert.severity === "critical"
+                          ? "text-danger"
+                          : alert.severity === "high"
+                          ? "text-warning"
+                          : "text-info"
+                      }
+                    />
                   </div>
-                ))}
-                {alerts.length === 0 && (
-                  <Well depth="default" className="py-8 flex items-center justify-center">
-                    <p className="text-sm font-medium text-[var(--color-muted)]">
-                      No critical alerts. Your profile is well-positioned.
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2 mb-1">
+                      <span className="text-sm font-semibold text-foreground">
+                        {alert.title}
+                      </span>
+                      <Badge variant={severityVariant(alert.severity)} className="text-[10px]">
+                        {alert.severity}
+                      </Badge>
+                    </div>
+                    <p className="text-xs text-muted-foreground leading-relaxed">
+                      {alert.description}
                     </p>
-                  </Well>
-                )}
-              </div>
-            </Card>
+                  </div>
+                </div>
+              ))}
+              {alerts.length === 0 && (
+                <p className="text-sm text-muted-foreground text-center py-6">
+                  No critical alerts. Your profile is well-positioned.
+                </p>
+              )}
+            </div>
+          </Card>
 
-            <Card padding="lg">
-              <CardHeader
-                title="High-ROI Moves"
-                subtitle="Ranked actions by estimated impact"
-              />
-              <div className="space-y-4">
-                {moves.map((move, index) => (
-                  <div
-                    key={move.id}
-                    className="flex items-start gap-4 p-4 rounded-2xl bg-[var(--color-background)] shadow-neumorph group hover:shadow-neumorph-hover hover:-translate-y-0.5 transition-all duration-300 cursor-pointer"
-                  >
-                    <div className="w-8 h-8 rounded-xl shadow-neumorph-inset flex items-center justify-center shrink-0 mt-0.5 bg-[var(--color-background)]">
-                      <span className="text-sm font-extrabold font-display text-[var(--color-accent)]">{index + 1}</span>
+          {/* High-ROI Moves */}
+          <Card>
+            <CardHeader
+              title="High-ROI Moves This Month"
+              subtitle="Ranked actions by estimated impact"
+            />
+            <div className="space-y-3">
+              {moves.map((move, index) => (
+                <div
+                  key={move.id}
+                  className="flex items-start gap-3 p-3 rounded-lg bg-muted/50 border border-border/50"
+                >
+                  <div className="w-6 h-6 rounded-full bg-primary/10 flex items-center justify-center shrink-0 mt-0.5">
+                    <span className="text-xs font-bold text-primary">{index + 1}</span>
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2 mb-1">
+                      <span className="text-sm font-semibold text-foreground">
+                        {move.title}
+                      </span>
+                      <Badge variant={priorityVariant(move.priority)} className="text-[10px]">
+                        {move.priority}
+                      </Badge>
                     </div>
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center gap-3 mb-1.5">
-                        <span className="text-sm font-bold text-[var(--color-foreground)] group-hover:text-[var(--color-accent)] transition-colors">
-                          {move.title}
+                    <p className="text-xs text-muted-foreground leading-relaxed mb-2">
+                      {move.description}
+                    </p>
+                    <div className="flex items-center gap-4">
+                      <div className="flex items-center gap-1">
+                        <Zap size={12} className="text-accent" />
+                        <span className="text-xs font-medium text-accent">
+                          +{move.estimatedImpact}% impact
                         </span>
                       </div>
-                      <p className="text-xs font-medium text-[var(--color-muted)] leading-relaxed mb-3">
-                        {move.description}
-                      </p>
-                      <div className="flex items-center gap-5">
-                        <div className="flex items-center gap-1.5">
-                          <Zap size={14} className="text-[var(--color-accent)]" />
-                          <span className="text-xs font-bold text-[var(--color-accent)]">
-                            +{move.estimatedImpact}% impact
-                          </span>
-                        </div>
-                        <div className="flex items-center gap-1.5">
-                          <Clock size={14} className="text-[var(--color-muted)]" />
-                          <span className="text-xs font-bold text-[var(--color-muted)]">
-                            {timeLabel(move.timeIntensity)}
-                          </span>
-                        </div>
-                        <ArrowRight size={14} className="text-[var(--color-muted)] ml-auto opacity-0 group-hover:opacity-100 transition-opacity transform group-hover:translate-x-1" />
+                      <div className="flex items-center gap-1">
+                        <Clock size={12} className="text-muted-foreground" />
+                        <span className="text-xs text-muted-foreground">
+                          {timeLabel(move.timeIntensity)}
+                        </span>
                       </div>
+                      <ArrowRight size={12} className="text-muted-foreground ml-auto" />
                     </div>
                   </div>
-                ))}
-              </div>
-            </Card>
-          </div>
+                </div>
+              ))}
+            </div>
+          </Card>
         </div>
       </div>
     </div>
