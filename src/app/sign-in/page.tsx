@@ -16,7 +16,7 @@ export default function SignInPage() {
   const handleSubmit = useCallback(
     (e: React.FormEvent) => {
       e.preventDefault();
-      router.push("/app");
+      router.push("/");
     },
     [router]
   );

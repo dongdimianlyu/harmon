@@ -12,11 +12,11 @@ import {
 } from "lucide-react";
 
 const navItems = [
-  { href: "/app", label: "Dashboard", icon: LayoutDashboard },
-  { href: "/app/positioning", label: "Positioning", icon: Target },
-  { href: "/app/execution", label: "Execution", icon: Zap },
-  { href: "/app/signal", label: "Signal", icon: Activity },
-  { href: "/app/narrative", label: "Narrative", icon: Network },
+  { href: "/", label: "Dashboard", icon: LayoutDashboard },
+  { href: "/positioning", label: "Positioning", icon: Target },
+  { href: "/execution", label: "Execution", icon: Zap },
+  { href: "/signal", label: "Signal", icon: Activity },
+  { href: "/narrative", label: "Narrative", icon: Network },
 ];
 
 export function Sidebar() {
@@ -37,7 +37,10 @@ export function Sidebar() {
 
         <nav className="flex items-center gap-1 rounded-full bg-white/5 border border-white/10 px-3 py-1.5">
           {navItems.map((item) => {
-            const isActive = pathname === item.href || pathname.startsWith(`${item.href}/`);
+            const isActive =
+              item.href === "/"
+                ? pathname === "/"
+                : pathname === item.href || pathname.startsWith(`${item.href}/`);
             const Icon = item.icon;
 
             return (

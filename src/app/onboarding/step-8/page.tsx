@@ -19,7 +19,7 @@ export default function Step8Roadmap() {
 
   const handleFinish = () => {
     // In a real app we'd mark onboarding as complete here
-    router.push("/app"); // Go to main dashboard
+    router.push("/");
   };
 
   return (
